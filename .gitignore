@@ -5,3 +5,5 @@ exercises/ch-7-ex-0/platforms/
 exercises/ch-7-ex-0/plugins/
 .DS_Store
 package-lock.json
+.vs/VSWorkspaceState.json
+.vs/oauth-in-action-code/v17/.wsuo

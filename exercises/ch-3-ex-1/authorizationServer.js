@@ -54,17 +54,17 @@ app.get("/authorize", function(req, res){
 		console.log('Unknown client %s', req.query.client_id);
 		res.render('error', {error: 'Unknown client'});
 		return;
-	} else if (!__.contains(client.redirect_uris, req.query.redirect_uri)) {
-		console.log('Mismatched redirect URI, expected %s got %s', client.redirect_uris, req.query.redirect_uri);
+	} else if (!__.contains(client.redirect_uris, req.query.redirect_uris)) {
+		console.log('Mismatched redirect URI, expected %s got %s', client.redirect_uris, req.query.redirect_uris);
 		res.render('error', {error: 'Invalid redirect URI'});
-		return;
+		//return;
 	} else {
 		
 		var rscope = req.query.scope ? req.query.scope.split(' ') : undefined;
 		var cscope = client.scope ? client.scope.split(' ') : undefined;
 		if (__.difference(rscope, cscope).length > 0) {
 			// client asked for a scope it couldn't have
-			var urlParsed = url.parse(req.query.redirect_uri);
+			var urlParsed = url.parse(req.query.redirect_uris);
 			delete urlParsed.search; // this is a weird behavior of the URL library
 			urlParsed.query = urlParsed.query || {};
 			urlParsed.query.error = 'invalid_scope';
@@ -107,7 +107,7 @@ app.post('/approve', function(req, res) {
 			var cscope = client.scope ? client.scope.split(' ') : undefined;
 			if (__.difference(scope, cscope).length > 0) {
 				// client asked for a scope it couldn't have
-				var urlParsed = url.parse(query.redirect_uri);
+				var urlParsed = url.parse(query.redirect_uris);
 				delete urlParsed.search; // this is a weird behavior of the URL library
 				urlParsed.query = urlParsed.query || {};
 				urlParsed.query.error = 'invalid_scope';
@@ -118,7 +118,7 @@ app.post('/approve', function(req, res) {
 			// save the code and request for later
 			codes[code] = { authorizationEndpointRequest: query, scope: scope, user: user };
 		
-			var urlParsed =url.parse(query.redirect_uri);
+			var urlParsed =url.parse(query.redirect_uris);
 			delete urlParsed.search; // this is a weird behavior of the URL library
 			urlParsed.query = urlParsed.query || {};
 			urlParsed.query.code = code;
@@ -127,7 +127,7 @@ app.post('/approve', function(req, res) {
 			return;
 		} else {
 			// we got a response type we don't understand
-			var urlParsed =url.parse(query.redirect_uri);
+			var urlParsed =url.parse(query.redirect_uris);
 			delete urlParsed.search; // this is a weird behavior of the URL library
 			urlParsed.query = urlParsed.query || {};
 			urlParsed.query.error = 'unsupported_response_type';
@@ -136,7 +136,7 @@ app.post('/approve', function(req, res) {
 		}
 	} else {
 		// user denied access
-		var urlParsed =url.parse(query.redirect_uri);
+		var urlParsed =url.parse(query.redirect_uris);
 		delete urlParsed.search; // this is a weird behavior of the URL library
 		urlParsed.query = urlParsed.query || {};
 		urlParsed.query.error = 'access_denied';
